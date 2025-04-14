@@ -1,89 +1,56 @@
-#include <iostream>
-#include <vector>
-#include <set>
-#include <map>
-#include <unordered_map>
-#include <fstream>
-#include <algorithm>
+#include <bits/stdc++.h>
 using namespace std;
 
+#define maxn 105
 
-int check(vector<int> cnt) {
-	int count = 0;
-	for(int x : cnt) count += x & 1;
-	if(count == 0) return 1;
-	else if(count == 2) return 2;
-	return 0;
-}
 
-void DFS(vector<vector<int>> dske, int u, vector<bool>& vis) {
+int n;
+int a[maxn][maxn] = {};
+int rev[maxn][maxn] = {};
+bool vis[maxn] = {};
+
+void DFS(int u, int graph[][maxn]) {
     vis[u] = true;
-    for(int v : dske[u]) {
-        if(!vis[v]) DFS(dske, v, vis);
-    }
-}
-
-bool tplt(vector<vector<int>>& dske, int& V) {
-    int cnt = 0;
-    vector<bool> vis(V + 1, false);
-    for(int i = 1; i <= V; i++) {
-        if(!vis[i]) {
-            DFS(dske, i, vis);
-            cnt++;
+    for(int v = 1; v <= n; v++) {
+        if(!vis[v] && graph[u][v]) {
+            DFS(v, graph);
         }
     }
-    return cnt == 1;
 }
 
-void Euler(int u, vector<vector<int>>& dske, vector<vector<bool>>& used, vector<int>& path) {
-    for(int i = 0; i < dske[u].size(); ++i) {
-        int v = dske[u][i];
-        if(!used[u][v]) {
-            used[u][v] = used[v][u] = true;
-            Euler(v, dske, used, path);
+int check() {
+    memset(vis, false, sizeof(vis));
+    DFS(1, a);
+    for(int i = 1; i <= n; i++) {
+        if(!vis[i]) return 0;
+    }
+    
+    for(int i = 1; i <= n; i++) {
+        for(int j = 1; j <= n; j++) {
+            rev[j][i] = a[i][j];
         }
     }
-    path.push_back(u);
-}
+    
+    memset(vis, false, sizeof(vis));
+    DFS(1, rev);
+    for (int i = 1; i <= n; i++)
+        if (!vis[i]) return 2;
 
+    return 1;
+}
 
 int main() {
-    //fstream cin("CT.in", ios::in);
-    //fstream cout("CT.out", ios::out);
-	int k; cin >> k;
-	if(k == 1) {
-		int V, E; cin >> V >> E;
-        vector<vector<int>> dske(V + 1);
-		vector<int> cnt(V + 1);
-		for(int i = 0; i < E; i++) {
-			int x, y; cin >> x >> y;
-			cnt[x]++;
-			cnt[y]++;
-            dske[x].push_back(y);
-            dske[y].push_back(x);
-		}
-        if(!tplt(dske, V)) {
-            cout << "0";
-            return 0;
+    freopen("TK.INP", "r", stdin);
+    freopen("TK.OUT", "w", stdout);
+    cin >> n;
+    
+    for(int i = 1; i <= n; i++) {
+        for(int j = 1; j <= n; j++) {
+            cin >> a[i][j];
         }
-		cout << check(cnt) << endl;
-	}
-	else if(k == 2) {
-		int V, E, u; cin >> V >> E >> u;
-        vector<vector<int>> dske(V + 1);
-        vector<vector<bool>> used(V + 1, vector<bool>(V + 1, false));
-        for (int i = 0; i < E; i++) {
-            int x, y; cin >> x >> y;
-            dske[x].push_back(y);
-            dske[y].push_back(x);
-        }
-        for(int i = 1; i <= V; i++) {
-            sort(dske[i].begin(), dske[i].end());
-        }
-        vector<int> path;
-        Euler(u, dske, used, path);
-        reverse(path.begin(), path.end());
-        for (int x : path) cout << x << " ";
-	}
-	return 0;
+    }
+
+    cout << check() << endl;
+    
+    return 0;
 }
