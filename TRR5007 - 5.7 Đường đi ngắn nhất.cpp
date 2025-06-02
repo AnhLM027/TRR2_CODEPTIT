@@ -16,32 +16,24 @@ void Bellman_Ford() {
 
     for(int i = 1; i <= n - 1; i++) {
         for(auto [u, v] : dsc) {
-            if(dp[v] > dp[u] + a[u][v]) {
+            if(dp[u] != INT_MAX && dp[v] > dp[u] + a[u][v]) {
                 dp[v] = dp[u] + a[u][v];
                 parent[v] = u;
             }
         }
     }
 
-    bool check = false;
     for(auto [u, v] : dsc) {
-        if(dp[v] > dp[u] + a[u][v]) {
-            check = true;
-            break;
+        if(dp[u] != INT_MAX && dp[v] > dp[u] + a[u][v]) {
+            cout << "-1" << endl;
+            return;
         }
-    }
-    
-    if(check) {
-        cout << "-1" << endl;
-        return;
     }
     
     if(dp[t] == INT_MAX) {
         cout << "0" << endl;
         return;
-    }
-
-    else cout << dp[t] << endl;
+    } else cout << dp[t] << endl;
     
     vector<int> res;
     do {

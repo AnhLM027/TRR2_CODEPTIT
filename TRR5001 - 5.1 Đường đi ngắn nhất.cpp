@@ -5,42 +5,34 @@ using namespace std;
 typedef long long ll;
 
 int n, s, t;
-vector<pair<int, int>> dsc;
+vector<int> dske[maxn];
 vector<int> parent(maxn, -1);
 int a[maxn][maxn] = {};
 
-void Bellman_Ford() {
+void Dijkstra() {
+    queue<pair<int, int>> qe;
+    qe.push({s, 0});
     vector<int> dp(maxn, INT_MAX);
-
     dp[s] = 0;
 
-    for(int i = 1; i <= n - 1; i++) {
-        for(auto [u, v] : dsc) {
+    while(!qe.empty()) {
+        auto [u, w] = qe.front(); qe.pop();
+
+        if(w > dp[u]) continue;
+
+        for(int v : dske[u]) {
             if(dp[v] > dp[u] + a[u][v]) {
                 dp[v] = dp[u] + a[u][v];
                 parent[v] = u;
+                qe.push({v, dp[v]});
             }
         }
     }
 
-    bool check = false;
-    for(auto [u, v] : dsc) {
-        if(dp[v] > dp[u] + a[u][v]) {
-            check = true;
-            break;
-        }
-    }
-    
-    if(check) {
-        cout << "-1" << endl;
-        return;
-    }
-    
     if(dp[t] == INT_MAX) {
-        cout << "0" << endl;
+        cout << 0 << endl;
         return;
     }
-
     else cout << dp[t] << endl;
     
     vector<int> res;
@@ -54,17 +46,17 @@ void Bellman_Ford() {
 }
 
 int main() {
-    freopen("BN.INP", "r", stdin);
-    freopen("BN.OUT", "w", stdout);
+    freopen("DN.INP", "r", stdin);
+    freopen("DN.OUT", "w", stdout);
     cin >> n >> s >> t;
     for(int i = 1; i <= n; i++) {
         for(int j = 1; j <= n; j++) {
             cin >> a[i][j];
-            if(a[i][j] != 0 && a[i][j] <= 50) dsc.push_back({i, j});
+            if(a[i][j] > 0 && a[i][j] <= 50) dske[i].push_back(j);
         }
     }
-    
-    Bellman_Ford();
+
+    Dijkstra();
     
     return 0;
 }
