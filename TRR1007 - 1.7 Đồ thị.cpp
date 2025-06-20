@@ -6,8 +6,8 @@
 using namespace std;
 
 int main() {
-    //fstream cin("DT.INP", ios::in);
-    //fstream cout("DT.OUT", ios::out);
+    fstream cin("DT.INP", ios::in);
+    fstream cout("DT.OUT", ios::out);
     int k, V; cin >> k >> V;
     vector<vector<int>> a(V + 1, vector<int>(V + 1, 0));
     vector<int> cnt(V + 1, 0);
